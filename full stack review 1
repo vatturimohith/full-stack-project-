@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SAD-PS17 Farming Platform</title>
+
+<!-- React CDN -->
+<script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+}
+
+nav {
+  background: green;
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+}
+
+button {
+  margin: 5px;
+  padding: 8px 15px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+input {
+  padding: 8px;
+  margin: 5px;
+}
+
+.container {
+  padding: 20px;
+}
+</style>
+</head>
+
+<body>
+<div id="root"></div>
+
+<script type="text/babel">
+
+const { useState } = React;
+
+/* ========== NAVBAR ========== */
+
+function Navbar({ setPage }) {
+  return (
+    <nav>
+      <h3>SAD-PS17 Farming Platform 🌾</h3>
+      <div>
+        <button onClick={() => setPage("home")}>Home</button>
+        <button onClick={() => setPage("admin")}>Admin</button>
+        <button onClick={() => setPage("farmer")}>Farmer</button>
+        <button onClick={() => setPage("expert")}>Expert</button>
+        <button onClick={() => setPage("public")}>Public</button>
+      </div>
+    </nav>
+  );
+}
+
+/* ========== HOME PAGE ========== */
+
+function Home() {
+  return (
+    <div className="container">
+      <h2>Welcome to Farming Awareness Platform</h2>
+      <p>
+        This platform raises awareness about farming and provides resources
+        to farmers, experts, and society to improve agricultural development.
+      </p>
+    </div>
+  );
+}
+
+/* ========== ADMIN DASHBOARD ========== */
+
+function Admin() {
+  const [posts, setPosts] = useState([]);
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
+  function addPost() {
+    if (title === "" || description === "") {
+      alert("Fill all fields");
+      return;
+    }
+
+    const newPost = {
+      id: Date.now(),
+      title,
+      description
+    };
+
+    setPosts([...posts, newPost]);
+    setTitle("");
+    setDescription("");
+  }
+
+  function deletePost(id) {
+    setPosts(posts.filter(post => post.id !== id));
+  }
+
+  return (
+    <div className="container">
+      <h2>Admin Dashboard — Manage Platform Content</h2>
+
+      <h3>Add Farming Resource</h3>
+
+      <input
+        placeholder="Resource Title"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
+
+      <br/>
+
+      <input
+        placeholder="Resource Description"
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
+
+      <br/>
+
+      <button onClick={addPost}>Add Resource</button>
+
+      <hr/>
+
+      <h3>Available Resources</h3>
+
+      {posts.length === 0 && <p>No resources added</p>}
+
+      {posts.map(post => (
+        <div key={post.id} style={{
+          border: "1px solid gray",
+          padding: "10px",
+          margin: "10px 0"
+        }}>
+          <h4>{post.title}</h4>
+          <p>{post.description}</p>
+          <button onClick={() => deletePost(post.id)}>Delete</button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+/* ========== FARMER SERVICES ========== */
+
+function Farmer() {
+  const [view, setView] = useState("");
+
+  return (
+    <div className="container">
+      <h2>Farmer Services</h2>
+
+      <button onClick={() => setView("resources")}>
+        Access Farming Resources
+      </button>
+
+      <button onClick={() => setView("markets")}>
+        Connect with Markets
+      </button>
+
+      <button onClick={() => setView("expert")}>
+        Get Expert Help
+      </button>
+
+      <hr />
+
+      {view === "resources" && (
+        <div>
+          <h3>Farming Resources</h3>
+          <ul>
+            <li>Modern irrigation techniques</li>
+            <li>Crop management guides</li>
+            <li>Government agriculture schemes</li>
+            <li>Soil testing information</li>
+          </ul>
+        </div>
+      )}
+
+      {view === "markets" && (
+        <div>
+          <h3>Market Connections</h3>
+          <ul>
+            <li>Local market price updates</li>
+            <li>Direct buyer connections</li>
+            <li>Online crop selling platforms</li>
+            <li>Agricultural trading centers</li>
+          </ul>
+        </div>
+      )}
+
+      {view === "expert" && (
+        <div>
+          <h3>Expert Support</h3>
+          <ul>
+            <li>Chat with agricultural experts</li>
+            <li>Crop disease solutions</li>
+            <li>Best farming practices guidance</li>
+            <li>Weather-based farming advice</li>
+          </ul>
+        </div>
+      )}
+
+      {view === "" && <p>Select a service above.</p>}
+    </div>
+  );
+}
+
+/* ========== EXPERT PAGE ========== */
+
+function Expert() {
+  return (
+    <div className="container">
+      <h2>Agricultural Expert Panel</h2>
+      <ul>
+        <li>Provide farming guidance</li>
+        <li>Create educational content</li>
+      </ul>
+    </div>
+  );
+}
+
+/* ========== PUBLIC PAGE ========== */
+
+function PublicPage() {
+  return (
+    <div className="container">
+      <h2>Public Awareness</h2>
+      <ul>
+        <li>Learn about farming</li>
+        <li>Join discussions</li>
+      </ul>
+    </div>
+  );
+}
+
+/* ========== MAIN APP ========== */
+
+function App() {
+  const [page, setPage] = useState("home");
+
+  function renderPage() {
+    switch(page) {
+      case "admin": return <Admin />;
+      case "farmer": return <Farmer />;
+      case "expert": return <Expert />;
+      case "public": return <PublicPage />;
+      default: return <Home />;
+    }
+  }
+
+  return (
+    <div>
+      <Navbar setPage={setPage} />
+      {renderPage()}
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+
+</script>
+</body>
+</html>
